@@ -10,10 +10,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "")
     private String password;
 
     @Enumerated(EnumType.STRING)
