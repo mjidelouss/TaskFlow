@@ -32,7 +32,7 @@ public class ResponseMessage {
         return new ResponseEntity(new ResponseMessage(HttpStatus.NOT_FOUND.value(), message), HttpStatus.NOT_FOUND);
     }
 
-    // Bad Request
+    // Bad Request Response
     public static ResponseEntity badRequest(String message) {
         return new ResponseEntity(new ResponseMessage(HttpStatus.BAD_REQUEST.value(), message), HttpStatus.BAD_REQUEST);
     }
