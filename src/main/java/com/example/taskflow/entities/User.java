@@ -28,6 +28,9 @@ public class User implements UserDetails {
     private String username;
 
     @NotBlank(message = "")
+    private String fullName;
+
+    @NotBlank(message = "")
     private String password;
 
     private String email;
