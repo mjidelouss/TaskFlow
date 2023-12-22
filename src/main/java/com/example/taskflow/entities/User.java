@@ -24,7 +24,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "")
+    @NotBlank(message = "User Shouldnt Be Blank")
     private String username;
 
     @NotBlank(message = "")
