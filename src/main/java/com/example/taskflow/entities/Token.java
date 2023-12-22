@@ -1,9 +1,7 @@
 package com.example.taskflow.entities;
 
+import com.example.taskflow.enums.TokenType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,21 +14,18 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Task {
+public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "")
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @PastOrPresent(message = "")
     private LocalDate creationDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Future(message = "")
-    private LocalDate deadline;
-
-    private boolean completed;
+    @Enumerated(EnumType.STRING)
+    private TokenType type;
 }
