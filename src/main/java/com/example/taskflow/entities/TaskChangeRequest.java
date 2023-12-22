@@ -34,6 +34,6 @@ public class TaskChangeRequest {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     private LocalDate timestamp;
 }

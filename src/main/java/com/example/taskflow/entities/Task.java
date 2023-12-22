@@ -24,11 +24,11 @@ public class Task {
     @NotBlank(message = "")
     private String description;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     @PastOrPresent(message = "")
     private LocalDate creationDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     @Future(message = "")
     private LocalDate deadline;
 

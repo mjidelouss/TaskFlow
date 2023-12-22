@@ -23,7 +23,6 @@ public class Token {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate creationDate;
 
     @Enumerated(EnumType.STRING)
