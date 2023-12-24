@@ -21,19 +21,21 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "User Shouldnt Be Blank")
+    @NotBlank(message = "Username shouldn't be blank")
     private String username;
 
-    @NotBlank(message = "")
+    @NotBlank(message = "Full name shouldn't be blank")
     private String fullName;
 
-    @NotBlank(message = "")
+    @NotBlank(message = "Password shouldn't be blank")
     private String password;
 
+    @NotBlank(message = "Email Cannot Be blank")
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -52,14 +54,17 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;

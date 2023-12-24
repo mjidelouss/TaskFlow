@@ -3,6 +3,10 @@ package com.example.taskflow.entities;
 import com.example.taskflow.enums.TaskActionType;
 import com.example.taskflow.enums.TaskStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,17 +26,24 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is required")
     private String title;
 
+    @NotBlank(message = "Description is required")
     private String description;
 
     @ManyToMany
     private List<Tag> tags;
 
+    @NotNull(message = "Deadline is required")
+    @Future(message = "Deadline must be in the future")
     private LocalDateTime deadline;
 
-    private boolean completed;
+    @NotNull(message = "Completed status is required")
+    private Boolean completed;
 
+    @ElementCollection
+    @NotEmpty(message = "Status list cannot be empty")
     @Enumerated(EnumType.STRING)
     private List<TaskStatus> status;
 
