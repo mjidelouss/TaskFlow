@@ -58,14 +58,26 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity updateTask(@RequestBody @Valid TaskDto taskDto, @PathVariable Long id) {
-        Task task = TaskMapper.mapTaskDtoToTask(taskDto);
-        Task task1 = taskService.updateTask(task, id);
+        Task existingTask = taskService.getTaskById(id);
+        if (existingTask == null) {
+            return ResponseMessage.notFound("Task Not Found");
+        }
+        LocalDateTime deadline = existingTask.getDeadline();
+        boolean isCompleted = taskDto.getCompleted() != null && taskDto.getCompleted();
+
+        if (deadline != null && isCompleted && LocalDateTime.now().isAfter(deadline)) {
+            return ResponseMessage.badRequest("Task cannot be marked as completed after the deadline");
+        }
+
+        Task updatedTask = TaskMapper.mapTaskDtoToTask(taskDto);
+        Task task1 = taskService.updateTask(updatedTask, id);
         if (task1 == null) {
             return ResponseMessage.badRequest("Task Not Updated");
         } else {
             return ResponseMessage.created("Task Updated Successfully", task1);
         }
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity deleteTask(@PathVariable Long id) {
         Task task = taskService.getTaskById(id);
