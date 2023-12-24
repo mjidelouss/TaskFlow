@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @RestController
@@ -38,11 +40,16 @@ public class TaskController {
         }
     }
 
-    @PostMapping("")
     public ResponseEntity createTask(@RequestBody @Valid TaskDto taskDto) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime deadline = taskDto.getDeadline();
+
+        if (deadline != null && now.until(deadline, ChronoUnit.DAYS) > 3) {
+            return ResponseMessage.badRequest("Task deadline cannot be more than 3 days in advance");
+        }
         Task task = TaskMapper.mapTaskDtoToTask(taskDto);
         Task task1 = taskService.createTask(task);
-        if(task1 == null) {
+        if (task1 == null) {
             return ResponseMessage.badRequest("Failed To Create Task");
         } else {
             return ResponseMessage.created("Task Created Successfully", task1);

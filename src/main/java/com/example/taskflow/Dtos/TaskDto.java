@@ -4,10 +4,7 @@ import com.example.taskflow.enums.TaskActionType;
 import com.example.taskflow.enums.TaskStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +26,7 @@ public class TaskDto {
     private String description;
 
     @NotEmpty(message = "At least one tag is required")
+    @Size(min = 3, message = "At least three tags are required")
     private List<String> tags;
 
     @NotNull(message = "Deadline is required")
