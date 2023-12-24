@@ -1,5 +1,6 @@
 package com.example.taskflow.entities;
 
+import com.example.taskflow.enums.TaskAssignmentType;
 import com.example.taskflow.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -37,6 +38,15 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany(mappedBy = "assignedTo")
+    private List<Task> tasksAssigned;
+
+    @OneToMany(mappedBy = "createdBy")
+    private List<Task> tasksCreated;
+
+    @Enumerated(EnumType.STRING)
+    private TaskAssignmentType assignmentType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

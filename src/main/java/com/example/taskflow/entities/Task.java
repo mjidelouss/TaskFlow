@@ -1,15 +1,15 @@
 package com.example.taskflow.entities;
 
+import com.example.taskflow.enums.TaskActionType;
+import com.example.taskflow.enums.TaskStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,20 +17,37 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Task {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "")
+    private String title;
+
     private String description;
 
+    @ManyToMany
+    private List<Tag> tags;
 
-    @PastOrPresent(message = "")
-    private LocalDate creationDate;
-
-
-    @Future(message = "")
-    private LocalDate deadline;
+    private LocalDateTime deadline;
 
     private boolean completed;
+
+    @Enumerated(EnumType.STRING)
+    private List<TaskStatus> status;
+
+    @Enumerated(EnumType.STRING)
+    private TaskActionType actionType;
+
+    @ManyToOne
+    @JoinColumn(name = "assigned_to_id")
+    private User assignedTo;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by_id")
+    private User createdBy;
+
+    private LocalDateTime creationDate;
+
+    private LocalDateTime modificationDate;
 }
