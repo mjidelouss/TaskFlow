@@ -3,10 +3,7 @@ package com.example.taskflow.entities;
 import com.example.taskflow.enums.TaskActionType;
 import com.example.taskflow.enums.TaskStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -58,6 +55,8 @@ public class Task {
     @JoinColumn(name = "created_by_id")
     private User createdBy;
 
+    @NotNull(message = "Creation date is required")
+    @FutureOrPresent(message = "Creation date must be in the present or the future")
     private LocalDateTime creationDate;
 
     private LocalDateTime modificationDate;

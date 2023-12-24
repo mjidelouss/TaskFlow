@@ -48,4 +48,8 @@ public class TaskDto {
 
     @NotNull(message = "CreatedBy is required")
     private Long createdById;
+
+    @NotNull(message = "Creation date is required")
+    @FutureOrPresent(message = "Creation date must be in the present or the future")
+    private LocalDateTime creationDate;
 }
