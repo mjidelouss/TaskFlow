@@ -2,12 +2,15 @@ package com.example.taskflow.controller;
 
 import com.example.taskflow.Dtos.TaskDto;
 import com.example.taskflow.entities.Task;
+import com.example.taskflow.entities.User;
 import com.example.taskflow.mappers.TaskMapper;
 import com.example.taskflow.response.ResponseMessage;
 import com.example.taskflow.service.TaskService;
+import com.example.taskflow.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +23,13 @@ import java.util.List;
 @RequestMapping("/api/v1/task")
 @RequiredArgsConstructor
 public class TaskController {
+
     private final TaskService taskService;
+    private final UserService userService;
+    private final TaskMapper taskMapper;
 
     @GetMapping("")
-    public ResponseEntity getTasks() {
+    public ResponseEntity<?> getTasks() {
         List<Task> tasks = taskService.getTasks();
         if (tasks.isEmpty()) {
             return ResponseMessage.notFound("Tasks Not Found");
@@ -51,20 +57,10 @@ public class TaskController {
             return ResponseMessage.badRequest("Task deadline cannot be more than 3 days in advance");
         }
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long currentUserId = getUserIdByUsername(userDetails.getUsername()); // You need to implement this method
+//        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = userService.getUserByUsername(userDetails.getUsername());
 
-        Task task = TaskMapper.mapTaskDtoToTask(taskDto);
-
-        // Check if the task is a replacement for a task assigned by the manager
-        if (isReplacementTask(task, currentUserId)) {
-            // Check and decrement the daily replacement token
-            if (hasDailyReplacementToken(currentUserId)) {
-                decrementDailyReplacementToken(currentUserId);
-            } else {
-                return ResponseMessage.badRequest("You have exceeded the daily replacement limit");
-            }
-        }
+        Task task = taskMapper.mapTaskDtoToTask(taskDto);
 
         Task task1 = taskService.createTask(task);
 
@@ -75,49 +71,36 @@ public class TaskController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity updateTask(@RequestBody @Valid TaskDto taskDto, @PathVariable Long id) {
-        Task existingTask = taskService.getTaskById(id);
-
-        if (existingTask == null) {
-            return ResponseMessage.notFound("Task Not Found");
-        }
-
-        LocalDateTime deadline = existingTask.getDeadline();
-        boolean isCompleted = taskDto.getCompleted() != null && taskDto.getCompleted();
-
-        if (deadline != null && isCompleted && LocalDateTime.now().isAfter(deadline)) {
-            return ResponseMessage.badRequest("Task cannot be marked as completed after the deadline");
-        }
-
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long currentUserId = getUserIdByUsername(userDetails.getUsername());
-
-        Task updatedTask = TaskMapper.mapTaskDtoToTask(taskDto);
-
-        // Check if the task is a replacement for a task assigned by the manager
-        if (isReplacementTask(updatedTask, currentUserId)) {
-            // Check and decrement the daily replacement token
-            if (hasDailyReplacementToken(currentUserId)) {
-                decrementDailyReplacementToken(currentUserId);
-            } else {
-                return ResponseMessage.badRequest("You have exceeded the daily replacement limit");
-            }
-        }
-
-        Task task1 = taskService.updateTask(updatedTask, id);
-
-        if (task1 == null) {
-            return ResponseMessage.badRequest("Task Not Updated");
-        } else {
-            return ResponseMessage.created("Task Updated Successfully", task1);
-        }
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity updateTask(@RequestBody @Valid TaskDto taskDto, @PathVariable Long id) {
+//        Task existingTask = taskService.getTaskById(id);
+//
+//        if (existingTask == null) {
+//            return ResponseMessage.notFound("Task Not Found");
+//        }
+//
+//        LocalDateTime deadline = existingTask.getDeadline();
+//        boolean isCompleted = taskDto.getCompleted() != null && taskDto.getCompleted();
+//
+//        if (deadline != null && isCompleted && LocalDateTime.now().isAfter(deadline)) {
+//            return ResponseMessage.badRequest("Task cannot be marked as completed after the deadline");
+//        }
+//
+//        Task updatedTask = TaskMapper.mapTaskDtoToTask(taskDto, user);
+//
+//        Task task1 = taskService.updateTask(updatedTask, id);
+//
+//        if (task1 == null) {
+//            return ResponseMessage.badRequest("Task Not Updated");
+//        } else {
+//            return ResponseMessage.created("Task Updated Successfully", task1);
+//        }
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteTask(@PathVariable Long id) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long currentUserId = getUserIdByUsername(userDetails.getUsername()); // You need to implement this method
+        Long currentUserId = userService.getUserIdByUsername(userDetails.getUsername()); // You need to implement this method
 
         Task task = taskService.getTaskById(id);
 
@@ -127,15 +110,9 @@ public class TaskController {
 
         // Check if the task is created by the current user
         if (task.getCreatedBy() != null && task.getCreatedBy().getId().equals(currentUserId)) {
-            // If the task is created by the current user, proceed with deletion without affecting tokens
             taskService.deleteTask(id);
             return ResponseMessage.ok("Task Deleted Successfully", task);
         }
-
-        // If the task is not created by the current user, perform token-related actions if needed
-        // Add token-related logic here if required
-
-        // Then, proceed with deletion
         taskService.deleteTask(id);
 
         return ResponseMessage.ok("Task Deleted Successfully", task);

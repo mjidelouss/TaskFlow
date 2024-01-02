@@ -2,6 +2,10 @@ package com.example.taskflow.entities;
 
 import com.example.taskflow.enums.TaskAssignmentType;
 import com.example.taskflow.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -26,7 +30,6 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Username shouldn't be blank")
     private String username;
 
     @NotBlank(message = "Full name shouldn't be blank")
@@ -42,9 +45,15 @@ public class User implements UserDetails {
     private UserRole role;
 
     @OneToMany(mappedBy = "assignedTo")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
     private List<Task> tasksAssigned;
 
     @OneToMany(mappedBy = "createdBy")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
     private List<Task> tasksCreated;
 
     @Enumerated(EnumType.STRING)

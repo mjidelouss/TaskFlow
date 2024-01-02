@@ -1,5 +1,6 @@
 package com.example.taskflow.Dtos;
 
+import com.example.taskflow.entities.User;
 import com.example.taskflow.enums.TaskActionType;
 import com.example.taskflow.enums.TaskStatus;
 import jakarta.persistence.EnumType;
@@ -33,23 +34,10 @@ public class TaskDto {
     @Future(message = "Deadline must be in the future")
     private LocalDateTime deadline;
 
-    @NotNull(message = "Completed status is required")
-    private Boolean completed;
-
-    @NotEmpty(message = "At least one status is required")
-    @Enumerated(EnumType.STRING)
-    private List<TaskStatus> status;
-
-    @Enumerated(EnumType.STRING)
-    private TaskActionType actionType;
-
-    @NotNull(message = "AssignedTo is required")
-    private Long assignedToId;
-
-    @NotNull(message = "CreatedBy is required")
-    private Long createdById;
-
     @NotNull(message = "Creation date is required")
     @FutureOrPresent(message = "Creation date must be in the present or the future")
     private LocalDateTime creationDate;
+
+    @NotNull(message = "Created By is required")
+    private Long createdBy;
 }

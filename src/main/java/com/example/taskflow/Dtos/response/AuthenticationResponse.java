@@ -1,4 +1,4 @@
-package com.example.taskflow.Dtos.request;
+package com.example.taskflow.Dtos.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequest {
-    private String email;
-    private String password;
+@NoArgsConstructor
+public class AuthenticationResponse {
+
+    private String token;
+
 }

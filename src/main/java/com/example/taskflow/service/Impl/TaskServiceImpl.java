@@ -2,6 +2,7 @@ package com.example.taskflow.service.Impl;
 
 import com.example.taskflow.entities.Task;
 import com.example.taskflow.repository.TaskRepository;
+import com.example.taskflow.service.TagService;
 import com.example.taskflow.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final TagService tagService;
 
     @Override
     public List<Task> getTasks() {
@@ -26,6 +28,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(Task task) {
+        task.getTags().forEach(tagService::createTag);
         return taskRepository.save(task);
     }
 
